@@ -12,7 +12,7 @@ const server = http.createServer((req, res) => {
 
   if (method == "GET" && pathname == "/user") {
     res.writeHead(200, { "Content-Type": "application/json" });
-    res.end(JSON.stringify(user));
+    res.end(JSON.stringify(user)); //body mei data bhejne ko use krte isee .end()
   } 
 });
 
