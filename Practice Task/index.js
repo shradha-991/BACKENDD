@@ -1,36 +1,21 @@
-const http = require('http');
-const fs = require('fs');
+const http = require("http");
+const fs = require("fs");
+const path = require("path");
 
-const server = http.createServer((req, res) => {
+const filePath = path.join(__dirname, 'log.txt');
 
-    const created = req.url === "/create";
-
-    const statusCode = created ? 201 : 200;
-    const statusMessage = created ? "CREATED" : "OK";
-
- 
-    const log = new Date().toISOString() +
-                " - " +
-                req.method +
-                " - " +
-                req.url +
-                " - " +
-                statusCode +
-                "\n";
-
-  
-    fs.appendFile('log.txt', log, (err) => {
-        if (err) {
-            res.writeHead(500, { 'Content-Type': 'text/plain' });
-            return res.end("Log Error");
-        }
-
-        res.writeHead(statusCode, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ message: statusMessage }));
-    });
-
+const server = http.createServer((req,res) => {
+    const url = new URL(req.url,`http://${req.headers.host}`);
+    const pathname = url.pathname;
+    const method = req.method;
+    const newlog = new Date().toISOString() +" " + pathname +" " + req.method;
+    fs.appendFile(filePath, newlog , () => {
+        res.writeHead(201, 'created');
+        res.end()
+    })
 });
 
-server.listen(3000, () => {
-    console.log("Server running on port 3000");
-});
+
+server.listen(3000 , () => {
+    console.log("server running on http://localhost:3000");
+})
